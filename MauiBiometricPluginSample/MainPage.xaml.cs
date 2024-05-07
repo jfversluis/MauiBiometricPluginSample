@@ -1,4 +1,6 @@
-﻿namespace MauiBiometricPluginSample
+﻿using Plugin.Maui.Biometric;
+
+namespace MauiBiometricPluginSample
 {
     public partial class MainPage : ContentPage
     {
@@ -9,16 +11,29 @@
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void OnCounterClicked(object sender, EventArgs e)
         {
-            count++;
+            var result = await BiometricAuthenticationService.Default.AuthenticateAsync(new AuthenticationRequest()
+            {
+                Title = "Please authenticate to increment",
+                NegativeText = "Cancel authentication"
+            }, CancellationToken.None);
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
+            if (result.Status == BiometricResponseStatus.Success)
+            {
+                count++;
+
+                if (count == 1)
+                    CounterBtn.Text = $"Clicked {count} time";
+                else
+                    CounterBtn.Text = $"Clicked {count} times";
+
+                SemanticScreenReader.Announce(CounterBtn.Text);
+            }
             else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            {
+                await DisplayAlert("Nope", "Couldnt authenticate" , "OK");
+            }
         }
     }
 

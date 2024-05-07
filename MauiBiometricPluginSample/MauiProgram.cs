@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Plugin.Maui.Biometric;
 
 namespace MauiBiometricPluginSample
 {
@@ -14,6 +15,9 @@ namespace MauiBiometricPluginSample
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            // Use with Dependency Injection
+            builder.Services.AddSingleton<IBiometric>(BiometricAuthenticationService.Default);
 
 #if DEBUG
     		builder.Logging.AddDebug();
